@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+    <p>
+        Please imput the tooth you'd like to purchase as a number (eg. 45 for Right Mandibular First Molar)
+    </p>
+
+    <form action="/buy" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="tooth" placeholder="Tooth" type="number" step="1" min="11">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="quantity" placeholder="Quantity" type="number" step="1" min="1">
+        </div>
+
+
+    <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Buy?
+        </button>
+
+    <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirm Purchase of Tooth?</h5>
+                <div class="modal-body">
+                  Remember to PayNow Jedi!
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit">Buy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+{% endblock %}

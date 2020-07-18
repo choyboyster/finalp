@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    index
+{% endblock %}
+
+{% block main %}
+    <h3>Portfolio</h3>
+    <tr>
+        <th>Stocks Owned</th>
+        <th>Shares Owned</th>
+        <th>Current Price</th>
+        <th>Total Value</th>
+    </tr>
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock.symbol }}</td>
+            <td>{{ stock.shares }}</td>
+            <td>{{ stock.price }}</td>
+            <td>{{ stock.total_value_share }}</td>
+        </tr>
+        {% endfor %}
+
+    <h5>Current cash balance: {{ cash }}<br>
+        Grand total value: {{ grand_total }}
+    </h5>
+
+
+{% endblock %}

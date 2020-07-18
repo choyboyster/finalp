@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tooth</th>
+                <th>Quantity</th>
+                <th>Amount Transferred</th>
+                <th>Transaction ID</th>
+                <th>Acknowledgement</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in histories %}
+            <tr>
+                <td>{{ history.tooth }}</td>
+                <td>{{ history.quantity }}</td>
+                <td>{{ history.cost }}</td>
+                <td>{{ history.time_stamp}}_{{ history.id}}</td>
+                <td>{{ history.acknowledged }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
