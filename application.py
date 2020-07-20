@@ -33,10 +33,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-import sqlalchemy
-# Configure CS50 Library to use SQLite database
-db = SQL("postgres://hcpqudqiyyqbpv:2d315abf96a6615193c736e99205e869ca8e51f142e940517aa51109dbaab6fa@ec2-34-192-173-173.compute-1.amazonaws.com:5432/dfe1jmmdi0ojfu")
 
+# Configure CS50 Library to use SQLite database
+#db = SQL("postgres://hcpqudqiyyqbpv:2d315abf96a6615193c736e99205e869ca8e51f142e940517aa51109dbaab6fa@ec2-34-192-173-173.compute-1.amazonaws.com:5432/dfe1jmmdi0ojfu")
+db = SQL("sqlite:///finance.db")
 
 @app.route("/")
 @login_required
@@ -86,7 +86,6 @@ def buy():
                    tooth=request.form.get("tooth"),
                    quantity=request.form.get("quantity"),
                    cost=cost)
-            db.commit()
 
         else:
             return apology("Sorry! Out of Teeth!", 403)
@@ -129,7 +128,7 @@ def acknowledged():
         else:
             db.execute("UPDATE history SET acknowledged= 'YES' WHERE id = :id",
                           id=request.form.get("id"))
-            db.commit()
+            
 
         # Redirect user to home page
         return render_template("success.html")
@@ -177,7 +176,7 @@ def add():
             db.execute("UPDATE inventory SET stock=:stock WHERE tooth=:tooth",
                         stock=new_inventory,
                         tooth=request.form.get("tooth"))
-            db.commit()
+            
 
         else:
             return apology("Sorry! Inventory cannot be less than zero", 403)
@@ -314,7 +313,7 @@ def register():
 
         # Add Register into SQL DB
         result = db.execute("INSERT INTO users (username, hash, reg, grouping, name) VALUES (:username, :hash, :reg, :group, :name)", username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")), reg=request.form.get("reg"), group=request.form.get("group"), name=request.form.get("name"))
-        db.commit()
+        
         if not result:
             return apology("Username Taken", 403)
 
@@ -359,7 +358,7 @@ def password():
 
         # Add Register into SQL DB
         db.execute("UPDATE users SET hash=:hash WHERE id=:id", id=session["user_id"], hash=generate_password_hash(request.form.get("password")))
-        db.commit()
+        
 
         # Redirect user to home page
         return render_template("password2.html", name=request.form.get("username"), password=request.form.get("password"))
