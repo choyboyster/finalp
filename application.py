@@ -33,6 +33,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+from flask_sqlalchemy import SQLAlchemy
 # Configure CS50 Library to use SQLite database
 db = SQL("postgres://hcpqudqiyyqbpv:2d315abf96a6615193c736e99205e869ca8e51f142e940517aa51109dbaab6fa@ec2-34-192-173-173.compute-1.amazonaws.com:5432/dfe1jmmdi0ojfu")
 
@@ -60,7 +61,8 @@ def buy():
 
         # Ensure if Valid Tooth
         rows = db.execute("SELECT * FROM inventory WHERE tooth = :tooth",
-                          tooth=request.form.get("tooth"))
+                          tooth=request.form.get("tooth")).fetchall()
+    
         if len(rows) != 1:
             return apology("Incorrect Tooth Imput")
 
@@ -70,7 +72,7 @@ def buy():
 
 
         # Update Inventory Log
-        current_inventory = db.execute("SELECT stock FROM inventory WHERE tooth=:tooth", tooth=request.form.get("tooth"))
+        current_inventory = db.execute("SELECT stock FROM inventory WHERE tooth=:tooth", tooth=request.form.get("tooth")).fetchall()
 
         new_inventory = current_inventory[0]["stock"] - int(request.form.get("quantity"))
 
@@ -84,6 +86,7 @@ def buy():
                    tooth=request.form.get("tooth"),
                    quantity=request.form.get("quantity"),
                    cost=cost)
+            db.commit()
 
         else:
             return apology("Sorry! Out of Teeth!", 403)
@@ -100,7 +103,7 @@ def buy():
 def history():
     """Show history of transactions"""
 
-    history = db.execute("SELECT * FROM history WHERE user_id= :id ORDER BY id DESC", id= session["user_id"])
+    history = db.execute("SELECT * FROM history WHERE user_id= :id ORDER BY id DESC", id= session["user_id"]).fetchall()
     return render_template("history.html", histories = history)
 
 @app.route("/acknowledged", methods=["GET", "POST"])
@@ -117,7 +120,7 @@ def acknowledged():
         # Query database for transaction id
         rows = db.execute("SELECT * FROM history WHERE user_id = :user_id AND id = :id",
                           id=request.form.get("id"),
-                          user_id=session["user_id"])
+                          user_id=session["user_id"]).fetchall()
 
         # Ensure transaction id exists and password is correct
         if len(rows) != 1:
@@ -126,6 +129,7 @@ def acknowledged():
         else:
             db.execute("UPDATE history SET acknowledged= 'YES' WHERE id = :id",
                           id=request.form.get("id"))
+            db.commit()
 
         # Redirect user to home page
         return render_template("success.html")
@@ -151,13 +155,13 @@ def add():
 
         # Ensure if Valid Tooth
         rows = db.execute("SELECT * FROM inventory WHERE tooth = :tooth",
-                          tooth=request.form.get("tooth"))
+                          tooth=request.form.get("tooth")).fetchall()
         if len(rows) != 1:
             return apology("Incorrect Tooth Imput")
 
         # Check if is an admin
         rows = db.execute("SELECT * FROM users WHERE id = :user_id AND username = 'admin'",
-                          user_id=session["user_id"])
+                          user_id=session["user_id"]).fetchall()
 
         # Ensure username exists and password is correct
         if len(rows) != 1:
@@ -165,7 +169,7 @@ def add():
 
 
         # Update Inventory Log
-        current_inventory = db.execute("SELECT stock FROM inventory WHERE tooth=:tooth", tooth=request.form.get("tooth"))
+        current_inventory = db.execute("SELECT stock FROM inventory WHERE tooth=:tooth", tooth=request.form.get("tooth")).fetchall()
 
         new_inventory = current_inventory[0]["stock"] + int(request.form.get("quantity"))
 
@@ -173,6 +177,7 @@ def add():
             db.execute("UPDATE inventory SET stock=:stock WHERE tooth=:tooth",
                         stock=new_inventory,
                         tooth=request.form.get("tooth"))
+            db.commit()
 
         else:
             return apology("Sorry! Inventory cannot be less than zero", 403)
@@ -189,7 +194,7 @@ def add():
 def totalhist():
     """Show history of transactions"""
 
-    history = db.execute("SELECT users.reg, users.name, users.grouping, history.tooth, history.quantity, history.cost, history.time_stamp, history.id, history.acknowledged FROM users JOIN history ON users.id = history.user_id ORDER BY history.id DESC")
+    history = db.execute("SELECT users.reg, users.name, users.grouping, history.tooth, history.quantity, history.cost, history.time_stamp, history.id, history.acknowledged FROM users JOIN history ON users.id = history.user_id ORDER BY history.id DESC").fetchall()
     return render_template("totalhist.html", histories = history)
 
 
@@ -213,7 +218,7 @@ def login():
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username"))
+                          username=request.form.get("username")).fetchall()
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -251,22 +256,22 @@ def quote():
         list = []
         for i in range(11,18):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            list.append(a[0]["stock"])
+            list.append(a[0]["stock"]).fetchall()
 
         pist = []
         for i in range(21,28):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            pist.append(a[0]["stock"])
+            pist.append(a[0]["stock"]).fetchall()
 
         gist = []
         for i in range(31,38):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            gist.append(a[0]["stock"])
+            gist.append(a[0]["stock"]).fetchall()
 
         tist = []
         for i in range(41,48):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            tist.append(a[0]["stock"])
+            tist.append(a[0]["stock"]).fetchall()
 
         return render_template("inventory.html", list=list, pist=pist, gist=gist, tist=tist)
 
@@ -309,12 +314,13 @@ def register():
 
         # Add Register into SQL DB
         result = db.execute("INSERT INTO users (username, hash, reg, grouping, name) VALUES (:username, :hash, :reg, :group, :name)", username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")), reg=request.form.get("reg"), group=request.form.get("group"), name=request.form.get("name"))
+        db.commit()
         if not result:
             return apology("Username Taken", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          username=request.form.get("username"))
+                          username=request.form.get("username")).fetchall()
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -353,6 +359,7 @@ def password():
 
         # Add Register into SQL DB
         db.execute("UPDATE users SET hash=:hash WHERE id=:id", id=session["user_id"], hash=generate_password_hash(request.form.get("password")))
+        db.commit()
 
         # Redirect user to home page
         return render_template("password2.html", name=request.form.get("username"), password=request.form.get("password"))
@@ -370,22 +377,22 @@ def summary():
         list = []
         for i in range(11,18):
             a = db.execute("SELECT sum(quantity) FROM history WHERE time_stamp = CURRENT_DATE AND tooth=:tooth", tooth=i)
-            list.append(a[0]["sum(quantity)"])
+            list.append(a[0]["sum(quantity)"]).fetchall()
 
         pist = []
         for i in range(21,28):
             a = db.execute("SELECT sum(quantity) FROM history WHERE time_stamp = CURRENT_DATE AND tooth=:tooth", tooth=i)
-            pist.append(a[0]["sum(quantity)"])
+            pist.append(a[0]["sum(quantity)"]).fetchall()
 
         gist = []
         for i in range(31,38):
             a = db.execute("SELECT sum(quantity) FROM history WHERE time_stamp = CURRENT_DATE AND tooth=:tooth", tooth=i)
-            gist.append(a[0]["sum(quantity)"])
+            gist.append(a[0]["sum(quantity)"]).fetchall()
 
         tist = []
         for i in range(41,48):
             a = db.execute("SELECT sum(quantity) FROM history WHERE time_stamp = CURRENT_DATE AND tooth=:tooth", tooth=i)
-            tist.append(a[0]["sum(quantity)"])
+            tist.append(a[0]["sum(quantity)"]).fetchall()
 
         return render_template("summary.html", list=list, pist=pist, gist=gist, tist=tist)
 
