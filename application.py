@@ -35,8 +35,8 @@ Session(app)
 
 
 # Configure CS50 Library to use SQLite database
-#db = SQL("postgres://hcpqudqiyyqbpv:2d315abf96a6615193c736e99205e869ca8e51f142e940517aa51109dbaab6fa@ec2-34-192-173-173.compute-1.amazonaws.com:5432/dfe1jmmdi0ojfu")
-db = SQL("sqlite:///finance.db")
+db = SQL("postgres://hcpqudqiyyqbpv:2d315abf96a6615193c736e99205e869ca8e51f142e940517aa51109dbaab6fa@ec2-34-192-173-173.compute-1.amazonaws.com:5432/dfe1jmmdi0ojfu")
+#db = SQL("sqlite:///finance.db")
 
 @app.route("/")
 @login_required
@@ -255,22 +255,22 @@ def quote():
         list = []
         for i in range(11,18):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            list.append(a[0]["stock"])
+            list.append(a[0]["stock"]).fetchall()
 
         pist = []
         for i in range(21,28):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            pist.append(a[0]["stock"])
+            pist.append(a[0]["stock"]).fetchall()
 
         gist = []
         for i in range(31,38):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            gist.append(a[0]["stock"])
+            gist.append(a[0]["stock"]).fetchall()
 
         tist = []
         for i in range(41,48):
             a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            tist.append(a[0]["stock"])
+            tist.append(a[0]["stock"]).fetchall()
 
         return render_template("inventory.html", list=list, pist=pist, gist=gist, tist=tist)
 
