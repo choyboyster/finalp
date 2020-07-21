@@ -256,7 +256,7 @@ def quote():
 
         list = []
         for i in range(11,18):
-            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i).fetchall()
+            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
             #a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": i}).fetchall()
             list.append(a[0]["stock"])
 
