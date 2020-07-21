@@ -256,25 +256,25 @@ def quote():
         list = []
         for i in range(11,18):
             #a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i).fetchall()
-            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": "i"}).fetchall()
+            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": i}).fetchall()
             list.append(a[0]["stock"])
 
         pist = []
         for i in range(21,28):
             #a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": "i"}).fetchall()
+            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": i}).fetchall()
             pist.append(a[0]["stock"])
 
         gist = []
         for i in range(31,38):
             #a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": "i"}).fetchall()
+            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": i}).fetchall()
             gist.append(a[0]["stock"])
 
         tist = []
         for i in range(41,48):
             #a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", tooth = i)
-            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": "i"}).fetchall()
+            a = db.execute("SELECT stock FROM inventory WHERE tooth = :tooth", {"tooth": i}).fetchall()
             tist.append(a[0]["stock"])
 
         return render_template("inventory.html", list=list, pist=pist, gist=gist, tist=tist)
