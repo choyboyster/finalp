@@ -1,7 +1,7 @@
 import os
 import psycopg2
 import sqlalchemy
-
+import cs50
 #from cs50 import SQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
