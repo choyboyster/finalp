@@ -139,7 +139,7 @@ def acknowledged():
                           #user_id=session["user_id"]))
         rows = (db.execute("SELECT * FROM history WHERE user_id = :user_id AND id = :id",
                           {"id": request.form.get("id"),
-                          "user_id": session["user_id"])}).fetchall()
+                          "user_id": session["user_id"]}).fetchall()
 
         # Ensure transaction id exists and password is correct
         if len(rows) != 1:
