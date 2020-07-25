@@ -61,3 +61,21 @@ def lookup(symbol):
 def usd(value):
     """Format value as USD."""
     return f"${value:,.2f}"
+
+
+def convert(listOfRowProxy):
+    # Coerce types
+    rows = [dict(row) for row in listOfRowProxy]
+    for row in rows:
+        for column in row:
+
+            # Coerce decimal.Decimal objects to float objects
+            # https://groups.google.com/d/msg/sqlalchemy/0qXMYJvq8SA/oqtvMD9Uw-kJ
+            if type(row[column]) is decimal.Decimal:
+                row[column] = float(row[column])
+
+            # Coerce memoryview objects (as from PostgreSQL's bytea columns) to bytes
+            elif type(row[column]) is memoryview:
+                row[column] = bytes(row[column])
+
+    return rows
