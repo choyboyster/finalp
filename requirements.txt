@@ -18,7 +18,7 @@ Click==7.0
 colorama==0.4.1
 compare50==1.1.2
 cryptography==2.8
-cs50==5.0.3
+cs50==5.0.4
 cssselect2==0.2.2
 cycler==0.10.0
 defusedxml==0.6.0
@@ -26,12 +26,12 @@ docutils==0.15.2
 EditorConfig==0.12.2
 Flask==1.1.1
 Flask-Session==0.3.1
+gunicorn==20.0.4
 help50==3.0.0
 html5lib==1.0.1
 icdiff==1.9.1
 idna==2.8
 ikp3db==1.4.1
-Inflector==2.0.12
 intervaltree==2.1.0
 isort==4.3.21
 itsdangerous==1.1.0
@@ -94,5 +94,4 @@ WeasyPrint==49
 webencodings==0.5.1
 Werkzeug==0.16.1
 wrapt==1.11.2
-gunicorn==19.9.0
 psycopg2
