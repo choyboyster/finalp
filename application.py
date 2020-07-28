@@ -142,15 +142,15 @@ def acknowledged():
                           "user_id": session["user_id"]}).fetchall()
 
         # Ensure transaction id exists and password is correct
-        if len(rows) != 1:
-            return apology("invalid transaction id", 403)
+        #if len(rows) != 1:
+            #return apology("invalid transaction id", 403)
 
-        else:
+        #else:
             #db.execute("UPDATE history SET acknowledged= 'YES' WHERE id = :id",
                           #id=request.form.get("id"))
-            db.execute("UPDATE history SET acknowledged= 'YES' WHERE id = :id",
+            #db.execute("UPDATE history SET acknowledged= 'YES' WHERE id = :id",
                           {"id": request.form.get("id")})
-            db.commit()
+            #db.commit()
             
 
         # Redirect user to home page
